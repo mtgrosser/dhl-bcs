@@ -10,7 +10,7 @@ module Dhl::Bcs::V2
       h['cis:name2'] = company if company
       h['cis:name3'] = company_addition if company_addition
       h['cis:streetName'] = street_name
-      h['cis:streetNumber'] = street_number
+      h['cis:streetNumber'] = street_number if street_number
       h['cis:addressAddition'] = address_addition if address_addition
       h['cis:dispatchingInformation'] = dispatching_information if dispatching_information
       h.merge(super)
