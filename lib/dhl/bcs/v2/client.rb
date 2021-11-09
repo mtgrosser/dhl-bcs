@@ -1,11 +1,13 @@
 require 'savon'
 require 'stringio'
 require 'logger'
+require 'pathname'
 
 module Dhl::Bcs::V2
   class Client
-
-    WSDL = 'https://cig.dhl.de/cig-wsdls/com/dpdhl/wsdl/geschaeftskundenversand-api/2.0/geschaeftskundenversand-api-2.0.wsdl'
+    VERSION = '3.1.8'
+    
+    WSDL = Pathname.new(__dir__).join('..', '..', '..', '..', 'wsdl', "geschaeftskundenversand-api-#{VERSION}.wsdl").realpath
 
     def initialize(config, log: true, test: false, **options)
       raise "User must be specified" if config[:user].nil?
@@ -38,7 +40,7 @@ module Dhl::Bcs::V2
       })
     end
 
-    def get_version(major: 2, minor: 0, build: nil)
+    def get_version(major: 3, minor: 1, build: nil)
       request(:get_version,
         'bcs:Version' => {
           'majorRelease' => major,
