@@ -3,11 +3,15 @@ require 'stringio'
 require 'logger'
 require 'pathname'
 
-module Dhl::Bcs::V2
+module Dhl::Bcs::V3
   class Client
-    VERSION = '3.1.8'
-    
-    WSDL = Pathname.new(__dir__).join('..', '..', '..', '..', 'wsdl', "geschaeftskundenversand-api-#{VERSION}.wsdl").realpath
+    MAJOR = '3'.freeze
+    MINOR = '1'.freeze
+    PATCH = '8'.freeze
+    API_VERSION = [MAJOR, MINOR, PATCH].join('.').freeze
+
+    # 'https://cig.dhl.de/cig-wsdls/com/dpdhl/wsdl/geschaeftskundenversand-api/2.0/geschaeftskundenversand-api-2.0.wsdl'
+    WSDL = Pathname.new(__FILE__).dirname.join('..', '..', '..', '..', 'wsdl', "geschaeftskundenversand-api-#{API_VERSION}.wsdl").realpath.to_s
 
     def initialize(config, log: true, test: false, **options)
       raise "User must be specified" if config[:user].nil?
@@ -40,7 +44,7 @@ module Dhl::Bcs::V2
       })
     end
 
-    def get_version(major: 3, minor: 1, build: nil)
+    def get_version(major: MAJOR, minor: MINOR, build: nil)
       request(:get_version,
         'bcs:Version' => {
           'majorRelease' => major,
@@ -61,9 +65,7 @@ module Dhl::Bcs::V2
 
     def create_shipment_order(*shipments, **options)
       request(:create_shipment_order, build_shipment_orders(shipments, options)) do |response|
-        [response.body[:create_shipment_order_response][:creation_state]].flatten.map do |creation_state|
-          creation_state[:label_data]
-        end
+        [response.body[:create_shipment_order_response][:creation_state]].flatten
       end
     end
 
@@ -91,7 +93,7 @@ module Dhl::Bcs::V2
       end
     end
 
-    # returns base64 encoded PDF Dokument
+    # returns base64 encoded PDF document
     def get_manifest(date)
       request(:get_manifest, 'manifestDate' => date) do |response|
         response.body[:get_manifest_response][:manifest_data]
@@ -124,8 +126,8 @@ module Dhl::Bcs::V2
       @logIO.string = ''
       response = @client.call(action, message: {
         'bcs:Version' => {
-          'majorRelease' => 2,
-          'minorRelease' => 0
+          'majorRelease' => MAJOR,
+          'minorRelease' => MINOR
         }
       }.merge(message))
       @logger << @logIO.string if @logger

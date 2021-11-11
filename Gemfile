@@ -1,4 +1,8 @@
 source 'https://rubygems.org'
 
-# Specify your gem's dependencies in dhl-bcs.gemspec
 gemspec
+
+gem 'rake'
+gem 'minitest'
+gem 'webmock', '~> 3.3'
+gem 'pry-byebug', '~> 3.6'
