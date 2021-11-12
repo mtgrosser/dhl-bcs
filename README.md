@@ -1,9 +1,9 @@
 # Dhl::Bcs
 
-This is a client for the DHL Business Customer Shipping (BCS) API version 2.0.
+This is a client for the DHL Business Customer Shipping (BCS) API version 3.1.
 It is inspired by the [DHL intraship gem](https://github.com/waldher/dhl-intraship) which implements API version 1.0 which is expired.
 The Dhl::Bcs gem uses [Savon 2](https://github.com/savonrb/savon) to communicate via SOAP with the DHL API.
-The DHL BCS API is just for standard parcels. If you are looking for shipping of express parcels this gem is not for you.
+The DHL BCS API is just for standard parcels shipped from Germany and Austria. If you are looking for shipping of express parcels or shipping from other countries, this gem is not for you.
 
 ## Installation
 
