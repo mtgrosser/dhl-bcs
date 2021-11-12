@@ -7,7 +7,7 @@ module Dhl::Bcs::V3
 
     def to_soap_hash
       h = {}
-      h['parcelShopNumber'] = parcel_shop_number
+      h['cis:parcelShopNumber'] = parcel_shop_number
       h['cis:streetName'] = street_name if street_name
       h['cis:streetNumber'] = street_number if street_number
       h.merge(super)
