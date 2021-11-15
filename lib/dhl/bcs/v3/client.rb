@@ -75,8 +75,16 @@ module Dhl::Bcs::V3
       end
     end
 
+    def delete_shipment_order(*shipment_numbers)
+      raise Dhl::Bcs::DataError, 'No more than 30 shipment_numbers allowed per request!' if shipment_numbers.size > 30
+      request(:delete_shipment_order, 'cis:shipmentNumber' => shipment_numbers) do |response|
+        array_wrap(response.body.dig(:delete_shipment_order_response, :deletion_state)).inject({}) do |h, data|
+          h.update(data[:shipment_number] => data[:status])
+        end
+      end
+    end
+
     {
-      delete_shipment_order: :deletion_state,
       get_label: :label_data,
       get_export_doc: :export_doc_data,
       do_manifest: :manifest_state
@@ -139,6 +147,16 @@ module Dhl::Bcs::V3
     def clean_response_data(data)
       data.delete(:@xmlns)
       data
+    end
+
+    def array_wrap(object)
+      if object.nil?
+        []
+      elsif object.respond_to?(:to_ary)
+        object.to_ary || [object]
+      else
+        [object]
+      end
     end
 
   end
