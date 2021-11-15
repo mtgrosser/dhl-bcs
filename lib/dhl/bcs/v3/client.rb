@@ -13,7 +13,7 @@ module Dhl::Bcs::V3
     # 'https://cig.dhl.de/cig-wsdls/com/dpdhl/wsdl/geschaeftskundenversand-api/2.0/geschaeftskundenversand-api-2.0.wsdl'
     WSDL = Pathname.new(__FILE__).dirname.join('..', '..', '..', '..', 'wsdl', "geschaeftskundenversand-api-#{API_VERSION}.wsdl").realpath.to_s
 
-    def initialize(config, log: true, test: false, **options)
+    def initialize(config, log: true, test: false)
       raise "User must be specified" if config[:user].nil?
       raise "Signature (password) must be specified" if config[:signature].nil?
       raise "EKP (first part of the DHL account number) must be specified" if config[:ekp].nil?
@@ -56,7 +56,7 @@ module Dhl::Bcs::V3
     end
 
     def validate_shipment(*shipments, **options)
-      request(:validate_shipment, build_shipment_orders(shipments, options)) do |response|
+      request(:validate_shipment, build_shipment_orders(shipments, **options)) do |response|
         [response.body[:validate_shipment_response][:validation_state]].flatten.map do |validation_state|
           validation_state[:status]
         end
@@ -64,13 +64,13 @@ module Dhl::Bcs::V3
     end
 
     def create_shipment_order(*shipments, **options)
-      request(:create_shipment_order, build_shipment_orders(shipments, options)) do |response|
+      request(:create_shipment_order, build_shipment_orders(shipments, **options)) do |response|
         [response.body[:create_shipment_order_response][:creation_state]].flatten
       end
     end
 
     def update_shipment_order(shipment_number, shipment, **options)
-      request(:update_shipment_order, { 'cis:shipmentNumber' => shipment_number }.merge(build_shipment_orders([shipment], options))) do |response|
+      request(:update_shipment_order, { 'cis:shipmentNumber' => shipment_number }.merge(build_shipment_orders([shipment], **options))) do |response|
         clean_response_data(response.body[:update_shipment_order_response][:label_data])
       end
     end
@@ -115,18 +115,17 @@ module Dhl::Bcs::V3
     protected
 
     def build_shipment_orders(shipments, label_response_type: 'URL', print_only_if_codeable: false)
+      debugger
       raise Dhl::Bcs::DataError, 'No more than 30 shipments allowed per request!' if shipments.size > 30
       {
-        'ShipmentOrder' =>
-          shipments.map.with_index(1) do |shipment, index|
-            h = {
-              'sequenceNumber' => format('%02i', index.to_s),
-              'Shipment' => shipment.to_soap_hash(@ekp, @participation_number),
-              'LabelResponseType' => label_response_type.to_s.upcase,
-            }
-            h['PrintOnlyIfCodeable/'] = {'@active': 1} if print_only_if_codeable
-            h
-          end
+        'ShipmentOrder' => shipments.map.with_index(1) { |shipment, index|
+          {
+            'sequenceNumber' => format('%02i', index.to_s),
+            'Shipment' => shipment.to_soap_hash(@ekp, @participation_number),
+            'PrintOnlyIfCodeable/' => { '@active': print_only_if_codeable ? 1 : 0 }
+          }
+        },
+        'labelResponseType' => label_response_type.to_s.upcase
       }
     end
 
