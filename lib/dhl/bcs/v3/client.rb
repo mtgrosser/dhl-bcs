@@ -115,7 +115,6 @@ module Dhl::Bcs::V3
     protected
 
     def build_shipment_orders(shipments, label_response_type: 'URL', print_only_if_codeable: false)
-      debugger
       raise Dhl::Bcs::DataError, 'No more than 30 shipments allowed per request!' if shipments.size > 30
       {
         'ShipmentOrder' => shipments.map.with_index(1) { |shipment, index|
