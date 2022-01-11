@@ -26,29 +26,17 @@ Or install it yourself as:
 Initialize a new API client using
 
 ```ruby
-client = Dhl::Bcs.client(config, options)
-```
-
-Config is the following hash:
-
-```ruby
-config = {
-  api_user: 'The user for API BasicAuth', #mandatory
-  api_pwd: 'The password for API BasicAuth', #mandatory
-  user: 'your BCS user name', #mandatory
-  signature: 'Your BCS user password', #mandatory
-  ekp: 'Your DHL EKP (first part of your DHL Account number)', #mandatory
-  participation_number: 'Your DHL participation_number (last two characters of your DHL Account number)' #mandatory
-}
-```
-
-Options is an optional parameter and can contain the following parameters:
-
-```ruby
-options = {
- test: true, # If test is set, all API calls go against the DHL test system (defaults to false)
- log: false # If log is set, you get all logging (with request and response XML) to your standard logger. (defaults to true)
-}
+client = Dhl::Bcs.client(
+  api_user: 'The user for API BasicAuth', # required
+  api_pwd: 'The password for API BasicAuth', # required
+  user: 'your BCS user name', # required
+  signature: 'Your BCS user password', # required
+  ekp: 'Your DHL EKP (first part of your DHL Account number)', # required
+  participation_number: 'Your DHL participation_number (last two characters of your DHL Account number)', # required
+  # options
+  test: true, # If test is set, all API calls go against the DHL test system (defaults to false)
+  log: false # If log is set, you get all logging (with request and response XML) to your standard logger. (defaults to true)
+)
 ```
 
 ### Where do I get all these numbers?
@@ -166,7 +154,7 @@ export_document = {
   permit_number = 1232135,
   attestation_number = 1234345,
   with_electronic_export_notification = true, # true|false
-  export_doc_positions: [
+  positions: [
     {
       description: 'content1',
       country_code_origing: 'CN',

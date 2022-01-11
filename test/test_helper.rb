@@ -1,10 +1,10 @@
-$LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
-require 'dhl/bcs'
-
-require 'minitest/autorun'
-require 'webmock/minitest'
-
+require 'rubygems'
+require 'bundler/setup'
+Bundler.require(:default)
 require 'pry'
+
+require 'webmock/minitest'
+require 'minitest/autorun'
 
 class Minitest::Test
 

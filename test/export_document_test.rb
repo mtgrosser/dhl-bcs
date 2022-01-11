@@ -5,7 +5,16 @@ module Dhl::Bcs::V3
 
     def test_build_export_document
       export_document = ExportDocument.build(
-        [
+        invoice_number: '12345678',
+        export_type: 'OTHER',
+        export_type_description: 'Permanent',
+        terms_of_trade: 'DDP',
+        place_of_commital: 'Bonn',
+        additional_fee: '1',
+        permit_number: '1234',
+        attestation_number: '12345678',
+        with_electronic_export_notification: true,
+        positions: [
           {
             description: 'ExportPositionOne',
             country_code_origin: 'CN',
@@ -22,18 +31,7 @@ module Dhl::Bcs::V3
             net_weight_in_kg: '0.4',
             customs_value: '99.90'
           }
-        ],
-        {
-          invoice_number: '12345678',
-          export_type: 'OTHER',
-          export_type_description: 'Permanent',
-          terms_of_trade: 'DDP',
-          place_of_commital: 'Bonn',
-          additional_fee: '1',
-          permit_number: '1234',
-          attestation_number: '12345678',
-          with_electronic_export_notification: true
-        }
+        ]
       )
 
       assert_equal '12345678', export_document.invoice_number
@@ -45,10 +43,10 @@ module Dhl::Bcs::V3
       assert_equal '1234', export_document.permit_number
       assert_equal '12345678', export_document.attestation_number
       assert_equal true , export_document.with_electronic_export_notification
-      assert_equal 2, export_document.export_doc_positions.count
+      assert_equal 2, export_document.positions.count
 
 
-      export_doc_position = export_document.export_doc_positions.first
+      export_doc_position = export_document.positions.first
       assert_equal 'ExportPositionOne', export_doc_position.description
       assert_equal 'CN', export_doc_position.country_code_origin
       assert_equal '12345678', export_doc_position.customs_tariff_number
@@ -56,7 +54,7 @@ module Dhl::Bcs::V3
       assert_equal '0.2', export_doc_position.net_weight_in_kg
       assert_equal '24.96', export_doc_position.customs_value
 
-      export_doc_position = export_document.export_doc_positions.last
+      export_doc_position = export_document.positions.last
       assert_equal 'ExportPositionTwo', export_doc_position.description
       assert_equal 'CN', export_doc_position.country_code_origin
       assert_equal '12345678', export_doc_position.customs_tariff_number
@@ -64,9 +62,8 @@ module Dhl::Bcs::V3
       assert_equal '0.4', export_doc_position.net_weight_in_kg
       assert_equal '99.90', export_doc_position.customs_value
 
-      assert_equal Hash, export_document.to_soap_hash.class
+      assert_kind_of Hash, export_document.to_soap_hash
     end
-
 
   end
 end

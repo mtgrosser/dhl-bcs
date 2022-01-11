@@ -13,16 +13,9 @@ module Dhl::Bcs::V3
     # 'https://cig.dhl.de/cig-wsdls/com/dpdhl/wsdl/geschaeftskundenversand-api/2.0/geschaeftskundenversand-api-2.0.wsdl'
     WSDL = Pathname.new(__FILE__).dirname.join('..', '..', '..', '..', 'wsdl', "geschaeftskundenversand-api-#{API_VERSION}.wsdl").realpath.to_s
 
-    def initialize(config, log: true, test: false)
-      raise "User must be specified" if config[:user].nil?
-      raise "Signature (password) must be specified" if config[:signature].nil?
-      raise "EKP (first part of the DHL account number) must be specified" if config[:ekp].nil?
-      raise "Participation Number (last two characters of account number) must be specified" if config[:participation_number].nil?
-      raise "Api User must be specified" if config[:api_user].nil?
-      raise "Api Password must be specified" if config[:api_pwd].nil?
-
-      @ekp = config[:ekp]
-      @participation_number = config[:participation_number]
+    def initialize(user:, signature:, ekp:, participation_number:, api_user:, api_pwd:, log: true, test: false)
+      @ekp = ekp
+      @participation_number = participation_number
 
       @logIO = StringIO.new
       @logger = log && Logger.new($stdout)
@@ -30,13 +23,13 @@ module Dhl::Bcs::V3
       @client = Savon.client({
         endpoint: (test ? 'https://cig.dhl.de/services/sandbox/soap' : 'https://cig.dhl.de/services/production/soap'),
         wsdl: WSDL,
-        basic_auth: [config[:api_user], config[:api_pwd]],
+        basic_auth: [api_user, api_pwd],
         logger: Logger.new(@logIO),
         log: true,
         soap_header: {
           'cis:Authentification' => {
-            'cis:user' => config[:user],
-            'cis:signature' => config[:signature],
+            'cis:user' => user,
+            'cis:signature' => signature,
             'cis:type' => 0
           }
         },
