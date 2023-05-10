@@ -19,24 +19,16 @@ require_relative 'bcs/v3/export_document'
 module Dhl
   module Bcs
 
-    def self.client(config, options = {})
-      V3::Client.new(config, options)
-    end
+    class << self
+      def client(*args, **kwargs)
+        V3::Client.new(*args, **kwargs)
+      end
 
-    def self.build_shipment(*args)
-      V3::Shipment.build(*args)
-    end
-
-    def self.build_shipper(*args)
-      V3::Shipper.build(*args)
-    end
-
-    def self.build_receiver(*args)
-      V3::Receiver.build(*args)
-    end
-
-    def self.build_service(*args)
-      V3::Service.new(*args)
+      %i[Shipment Shipper Receiver Service].each do |name|
+        define_method "build_#{name.to_s.downcase}" do |*args, **kwargs|
+          V3.const_get(name).build(*args, **kwargs)
+        end
+      end
     end
 
   end

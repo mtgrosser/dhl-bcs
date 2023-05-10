@@ -1,20 +1,18 @@
 module Dhl::Bcs::V3
   class Shipper
-
+    include Buildable
+    
     PROPERTIES = %i(name company company_addition address communication).freeze
 
     attr_accessor(*PROPERTIES)
 
-    def self.build(company: nil, **attributes)
+    def self.build(attributes = {})
+      # FIXME: company goes where?
+      attributes = attributes.dup
+      company = attributes.delete(:company)
       address = Address.build(attributes)
       communication = Communication.build(attributes)
       new(attributes.merge(address: address, communication: communication, company: company))
-    end
-
-    def initialize(**attributes)
-      attributes.each do |property, value|
-        send("#{property}=", value) if PROPERTIES.include?(property)
-      end
     end
 
     def to_soap_hash

@@ -6,22 +6,17 @@ module Dhl::Bcs::V3
     end
 
     module ClassMethods
-      def build(attributes)
-        attrib = attributes[underscore(name.split('::').last).to_sym]
-        if attrib.is_a?(self)
-          attrib
-        elsif attrib.nil?
-          klass_attributes = {}
-          self::PROPERTIES.each do |prop|
-            value = attributes.delete(prop)
-            klass_attributes[prop] = value if value
-          end
-          new(klass_attributes)
-        elsif attrib.is_a?(Hash)
-          new(attrib)
-        end
+      
+      def build(attributes = {})
+        attr = attributes[underscore(name.split('::').last).to_sym]
+        return attr if attr.is_a?(self)
+        attr ? new(attr) : new(attributes.slice(*self::PROPERTIES).keep_if { |_, value| value })
       end
 
+      def property?(name)
+        self::PROPERTIES.include?(name)
+      end
+      
       private
 
       # borrowed from rails without acronyms
@@ -37,9 +32,9 @@ module Dhl::Bcs::V3
 
     end
 
-    def initialize(**attributes)
+    def initialize(attributes = {})
       attributes.each do |property, value|
-        send("#{property}=", value) if self.class::PROPERTIES.include?(property)
+        send("#{property}=", value) if self.class.property?(property)
       end
     end
 
