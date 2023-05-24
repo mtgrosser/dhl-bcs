@@ -8,10 +8,9 @@ module Dhl::Bcs::V3
     EXPORT_TYPES = %w(OTHER PRESENT COMMERCIAL_SAMPLE DOCUMENT RETURN_OF_GOODS).freeze
     TERMS_OF_TRADES = %w(DDP DXV DDU DDX).freeze
 
-    def self.build(attributes = {})
-      attributes = attributes.dup
-      attributes[:positions] = attributes[:positions].map { |attrs| ExportDocPosition.build(attrs) } if attributes[:positions]
-      new(attributes)
+    def self.build(**attributes)
+      attributes[:positions] = attributes[:positions].map { |attrs| ExportDocPosition.build(**attrs) } if attributes[:positions]
+      new(**attributes)
     end
 
     def export_type=(export_type)

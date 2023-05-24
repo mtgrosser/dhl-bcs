@@ -20,8 +20,8 @@ module Dhl
   module Bcs
 
     class << self
-      def client(*args, **kwargs)
-        V3::Client.new(*args, **kwargs)
+      def client(...)
+        V3::Client.new(...)
       end
 
       %i[Shipment Shipper Receiver Service].each do |name|

@@ -2,9 +2,9 @@ module Dhl::Bcs::V3
   # finds proper class from attributes and builds object
   class Locator
 
-    def self.for(attributes = {})
+    def self.for(**attributes)
       location_class = location_class_finder(attributes)
-      location_builder(attributes, location_class: location_class)
+      location_builder(**attributes, location_class: location_class)
     end
 
     def self.location_class_finder(attributes)
@@ -19,8 +19,8 @@ module Dhl::Bcs::V3
       end
     end
 
-    def self.location_builder(attributes = {}, location_class: Address)
-      location_class.build(attributes)
+    def self.location_builder(location_class: Address, **attributes)
+      location_class.build(**attributes)
     end
 
   end

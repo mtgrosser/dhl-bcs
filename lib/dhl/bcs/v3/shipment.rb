@@ -22,16 +22,16 @@ module Dhl::Bcs::V3
     PRODUCTS = PRODUCT_PROCEDURE_NUMBERS.keys.freeze
 
     # build a shipment from hash data
-    def self.build(attributes = {})
+    def self.build(**attributes)
       attributes = attributes.dup
-      shipper = attributes.delete(:shipper)&.then { |attrs| Shipper.build(attrs) }
-      receiver = attributes.delete(:receiver)&.then { |attrs| Receiver.build(attrs) }
-      bank_data = attributes.delete(:bank_data)&.then { |attrs| BankData.build(attrs) }
-      export_document = attributes.delete(:export_document)&.then { |attrs| ExportDocument.build(attrs) }
-      new(attributes.merge(shipper: shipper, receiver: receiver, bank_data: bank_data, export_document: export_document))
+      shipper = attributes.delete(:shipper)&.then { |attrs| Shipper.build(**attrs) }
+      receiver = attributes.delete(:receiver)&.then { |attrs| Receiver.build(**attrs) }
+      bank_data = attributes.delete(:bank_data)&.then { |attrs| BankData.build(**attrs) }
+      export_document = attributes.delete(:export_document)&.then { |attrs| ExportDocument.build(**attrs) }
+      new(**attributes.merge(shipper: shipper, receiver: receiver, bank_data: bank_data, export_document: export_document))
     end
 
-    def initialize(attributes = {})
+    def initialize(**attributes)
       assign_attributes(
         {
           product: 'V01PAK',

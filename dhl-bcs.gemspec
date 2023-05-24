@@ -14,6 +14,8 @@ Gem::Specification.new do |spec|
   spec.homepage      = "https://github.com/webit-de/dhl-bcs"
   spec.license       = "MIT"
 
+  spec.required_ruby_version = '>= 3'
+  
   spec.files         = Dir['{lib,wsdl}/**/*.{rb,wsdl,xsd}', 'LICENSE.txt', 'README.md', 'CHANGELOG.md']
   spec.require_paths = ["lib"]
 

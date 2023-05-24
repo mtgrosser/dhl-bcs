@@ -6,13 +6,13 @@ module Dhl::Bcs::V3
 
     attr_accessor(*PROPERTIES)
 
-    def self.build(attributes = {})
+    def self.build(**attributes)
       # FIXME: company goes where?
       attributes = attributes.dup
       company = attributes.delete(:company)
-      address = Address.build(attributes)
-      communication = Communication.build(attributes)
-      new(attributes.merge(address: address, communication: communication, company: company))
+      address = Address.build(**attributes)
+      communication = Communication.build(**attributes)
+      new(**attributes.merge(address: address, communication: communication, company: company))
     end
 
     def to_soap_hash

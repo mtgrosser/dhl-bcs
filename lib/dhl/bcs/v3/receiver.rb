@@ -6,13 +6,13 @@ module Dhl::Bcs::V3
 
     attr_accessor(*PROPERTIES)
 
-    def self.build(attributes = {})
-      communication = Communication.build(attributes)
-      location = Locator.for(attributes)
-      new(attributes.merge(communication: communication, location: location))
+    def self.build(**attributes)
+      communication = Communication.build(**attributes)
+      location = Locator.for(**attributes)
+      new(**attributes.merge(communication: communication, location: location))
     end
 
-    def initialize(attributes = {})
+    def initialize(**attributes)
       attributes.each do |property, value|
         send("#{property}=", value) if PROPERTIES.include?(property)
       end

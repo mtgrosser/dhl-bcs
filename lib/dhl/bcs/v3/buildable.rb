@@ -7,10 +7,10 @@ module Dhl::Bcs::V3
 
     module ClassMethods
       
-      def build(attributes = {})
+      def build(**attributes)
         attr = attributes[underscore(name.split('::').last).to_sym]
         return attr if attr.is_a?(self)
-        attr ? new(attr) : new(attributes.slice(*self::PROPERTIES).keep_if { |_, value| value })
+        attr ? new(**attr) : new(**attributes.slice(*self::PROPERTIES).keep_if { |_, value| value })
       end
 
       def property?(name)
